@@ -1,47 +1,54 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import { ref, computed } from 'vue'
+
+const workMinutes = ref(25)
+const relaxMinutes = ref(5)
+const countdown = ref(0)
+const timerIntervalId = ref(0)
+
+const formattedCountdown = computed(() => {
+  const seconds = countdown.value
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+  return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
+})
+
+const startWork = () => {
+  countdown.value = workMinutes.value * 60
+  startTimer()
+}
+
+const startRelax = () => {
+  countdown.value = relaxMinutes.value * 60
+  startTimer()
+}
+
+const startTimer = () => {
+  if (timerIntervalId.value) {
+    clearInterval(timerIntervalId.value)
+  }
+
+  timerIntervalId.value = setInterval(() => {
+    countdown.value--
+
+    if (countdown.value === 0) {
+      clearInterval(timerIntervalId.value)
+      const audio = new Audio('alarm-long.ogg')
+      audio.play()
+    }
+  }, 1000)
+}
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <div>vue-timer</div>
+  <form @submit.prevent="startWork">
+    <input type="number" v-model="workMinutes" />
+    <button type="submit">Start work</button>
+  </form>
+  <form @submit.prevent="startRelax">
+    <input type="number" v-model="relaxMinutes" />
+    <button type="submit">Start relax</button>
+    <div>{{ formattedCountdown }}</div>
+  </form>
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>
