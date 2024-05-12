@@ -4,7 +4,7 @@ import { ref, computed } from 'vue'
 const workMinutes = ref(25)
 const relaxMinutes = ref(5)
 const countdown = ref(0)
-const timerIntervalId = ref(0)
+const timerWorker = new Worker('src/timerWorker.ts')
 
 const formattedCountdown = computed(() => {
   const seconds = countdown.value
@@ -24,19 +24,18 @@ const startRelax = () => {
 }
 
 const startTimer = () => {
-  if (timerIntervalId.value) {
-    clearInterval(timerIntervalId.value)
-  }
+  timerWorker.postMessage({ type: 'start', countdown: countdown.value })
 
-  timerIntervalId.value = setInterval(() => {
-    countdown.value--
+  timerWorker.onmessage = (e) => {
+    console.log('received from worker', e.data) ////
 
-    if (countdown.value === 0) {
-      clearInterval(timerIntervalId.value)
+    if (e.data.type === 'expired') {
       const audio = new Audio('alarm-long.ogg')
       audio.play()
+    } else if (e.data.type === 'tick') {
+      countdown.value = e.data.countdown
     }
-  }, 1000)
+  }
 }
 </script>
 
