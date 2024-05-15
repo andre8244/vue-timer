@@ -39,15 +39,15 @@ const startRelax = () => {
 }
 
 const startTimer = () => {
+  Notification.requestPermission()
   timerWorker.postMessage({ type: 'start', countdown: countdown.value })
   windowTitle.value = `${minutesRemaining.value} mins`
 
   timerWorker.onmessage = (e) => {
-    // console.log('received from worker', e.data, new Date().toLocaleString()) ////
-
     if (e.data.type === 'expired') {
       const audio = new Audio('alarm-long.ogg')
       audio.play()
+      new Notification('vue-timer', { body: 'Timer has expired' })
     } else if (e.data.type === 'tick') {
       countdown.value = e.data.countdown
 
