@@ -11,7 +11,7 @@ const defaultRelaxMinsString = '5'
 const workMinutes = ref(defaultWorkMinsString)
 const relaxMinutes = ref(defaultRelaxMinsString)
 const countdown = ref(0)
-const timerWorker = new Worker('src/timerWorker.ts')
+const timerWorker = new Worker(new URL('./timerWorker', import.meta.url), { type: 'module' })
 windowTitle.value = appName
 
 const formattedCountdown = computed(() => {
