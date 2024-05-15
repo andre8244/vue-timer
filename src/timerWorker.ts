@@ -20,5 +20,7 @@ onmessage = function (e) {
         postMessage({ type: 'expired' })
       }
     }, 1000)
+  } else if (e.data.type === 'stop') {
+    clearInterval(timerIntervalId)
   }
 }

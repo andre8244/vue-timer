@@ -62,6 +62,11 @@ const startTimer = () => {
   }
 }
 
+const stopTimer = () => {
+  timerWorker.postMessage({ type: 'stop' })
+  countdown.value = 0
+}
+
 function onInputWorkMinutes(e: InputEvent) {
   const target = e.target as HTMLInputElement
   const value = Number(target.value)
@@ -82,29 +87,34 @@ function onInputRelaxMinutes(e: InputEvent) {
 </script>
 
 <template>
-  <div class="p-8 space-y-6 max-w-2xl m-auto">
-    <div class="text-9xl text-center text-primary-700 dark:text-primary-300 mb-12">
-      {{ formattedCountdown }}
+  <div class="p-10 max-w-2xl m-auto flex items-center flex-col gap-12">
+    <div class="flex items-center flex-col gap-6">
+      <div class="text-primary-700 dark:text-primary-300 text-9xl text-center">
+        {{ formattedCountdown }}
+      </div>
+      <NeButton size="lg" class="w-24" @click="stopTimer">Stop</NeButton>
     </div>
-    <form @submit.prevent="startWork" class="flex justify-center gap-4 items-start">
-      <NeTextInput
-        type="number"
-        v-model="workMinutes"
-        class="w-40"
-        helperText="Minutes"
-        @input="onInputWorkMinutes"
-      />
-      <NeButton type="submit" kind="primary" size="lg">Start work</NeButton>
-    </form>
-    <form @submit.prevent="startRelax" class="flex justify-center gap-4 items-start">
-      <NeTextInput
-        type="number"
-        v-model="relaxMinutes"
-        class="w-40"
-        helperText="Minutes"
-        @input="onInputRelaxMinutes"
-      />
-      <NeButton type="submit" kind="primary" size="lg">Start relax</NeButton>
-    </form>
+    <div class="space-y-6">
+      <form @submit.prevent="startWork" class="flex justify-center gap-4 items-start">
+        <NeTextInput
+          type="number"
+          v-model="workMinutes"
+          class="w-40"
+          helperText="Minutes"
+          @input="onInputWorkMinutes"
+        />
+        <NeButton type="submit" kind="primary" size="lg">Start work</NeButton>
+      </form>
+      <form @submit.prevent="startRelax" class="flex justify-center gap-4 items-start">
+        <NeTextInput
+          type="number"
+          v-model="relaxMinutes"
+          class="w-40"
+          helperText="Minutes"
+          @input="onInputRelaxMinutes"
+        />
+        <NeButton type="submit" kind="primary" size="lg">Start relax</NeButton>
+      </form>
+    </div>
   </div>
 </template>
